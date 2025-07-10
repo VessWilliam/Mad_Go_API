@@ -1,0 +1,73 @@
+################################
+# Go toolchain & build output
+################################
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/bin/
+/build/
+/dist/
+/coverage/
+
+# Go workspace file (Go 1.22+)
+go.work
+
+################################
+# Dependency & cache directories
+################################
+$GOPATH/pkg/mod/
+$GOPATH/pkg/sumdb/
+*.race
+
+################################
+# Gin / env configs
+################################
+.env
+.env.*
+config/*.yaml
+config/*.toml
+config/*.json
+
+################################
+# IDEs / editors
+################################
+.vscode/
+.idea/
+/*.sublime*
+*.swp
+*~
+
+################################
+# Windows OS cruft
+################################
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+################################
+# macOS cruft (in case you zip repo on mac)
+################################
+.DS_Store
+
+################################
+# Logs
+################################
+*.log
+logs/
+
+################################
+# Docker / container artifacts
+################################
+**/docker-cache/
+docker-compose.override.yml
+
+################################
+# Testing & coverage
+################################
+coverage.out
+*.coverprofile
+*.lcov
