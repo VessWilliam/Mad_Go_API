@@ -3,8 +3,8 @@ package main
 import (
 	"database/sql"
 	"log"
-	env "rest_api_gin/Internal/.env"
-	"rest_api_gin/Internal/database"
+	env "rest_api_gin/internal/.env"
+	"rest_api_gin/internal/database"
 
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/mattn/go-sqlite3"
@@ -26,7 +26,7 @@ func main() {
 	models := database.NewModels(db)
 	app := &application{
 		port:      env.GetEnvInt("PORT", 8080),
-		jwtSecret: env.GetEnvString("JWT_SECRET", "gingingo"),
+		jwtSecret: env.GetEnvString("JWT_SECRET", "vesswilliam19940702"),
 		models:    models,
 	}
 

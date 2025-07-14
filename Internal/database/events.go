@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
-	utils "rest_api_gin/Internal/Utils"
+	utils "rest_api_gin/internal/Utils"
 	"time"
 )
 

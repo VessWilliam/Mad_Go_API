@@ -2,7 +2,7 @@ package main
 
 import (
 	"net/http"
-	"rest_api_gin/Internal/database"
+	"rest_api_gin/internal/database"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
