@@ -7,7 +7,7 @@ import (
 	"rest_api_gin/internal/database"
 
 	_ "github.com/joho/godotenv/autoload"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 type application struct {
@@ -17,7 +17,9 @@ type application struct {
 }
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	dsn := "postgres://postgres:root123@localhost:5433/madevent?sslmode=disable"
+
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}

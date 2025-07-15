@@ -4,10 +4,13 @@ import (
 	"database/sql"
 	"log"
 	"os"
+	"strconv"
 
-	"github.com/golang-migrate/migrate"
-	"github.com/golang-migrate/migrate/database/sqlite3"
-	"github.com/golang-migrate/migrate/source/file"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -17,24 +20,24 @@ func main() {
 
 	direction := os.Args[1]
 
-	db, err := sql.Open("sqlite3", "./data.db")
+	connectionstring := "postgres://postgres:root123@localhost:5433/madevent?sslmode=disable"
+	db, err := sql.Open("postgres", connectionstring)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer db.Close()
 
-	instance, err := sqlite3.WithInstance(db, &sqlite3.Config{})
+	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fSrc, err := (&file.File{}).Open("src/migrate/migrations")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	m, err := migrate.NewWithInstance("file", fSrc, "instance", instance)
+	m, err := migrate.NewWithDatabaseInstance(
+		"file://cmd/migrate/migrations",
+		"postgres",
+		driver,
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,6 +50,17 @@ func main() {
 	case "down":
 		if err := m.Down(); err != nil && err != migrate.ErrNoChange {
 			log.Fatal(err)
+		}
+	case "force":
+		if len(os.Args) < 3 {
+			log.Fatal("Please provide a version number for 'force'")
+		}
+		version, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			log.Fatalf("Invalid version number: %v", err)
+		}
+		if err := m.Force(version); err != nil {
+			log.Fatalf("Force migration failed: %v", err)
 		}
 
 	default:

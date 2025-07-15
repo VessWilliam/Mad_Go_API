@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"log"
 	"time"
 )
 
@@ -23,6 +24,11 @@ func (m *UserModel) Insert(user *User) error {
 
 	query := "Insert into users (email, password, name) values ($1,$2,$3) returning id"
 
-	return m.DB.QueryRowContext(ctx, query, user.Email, user.Password, user.Name).Scan(&user.Id)
+	err := m.DB.QueryRowContext(ctx, query, user.Email, user.Password, user.Name).Scan(&user.Id)
+	if err != nil {
+		log.Println("Insert User Error:", err)
+	}
+
+	return err
 
 }

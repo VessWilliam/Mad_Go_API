@@ -1,7 +1,5 @@
-PRAGMA foreign_keys = ON;
-
 CREATE TABLE IF NOT EXISTS attendences (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
     event_id INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
