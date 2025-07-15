@@ -21,9 +21,5 @@ func (app *application) routes() http.Handler {
 
 	}
 
-	// for _, r := range g.Routes() {
-	// 	log.Printf("[ROUTE] %s %s", r.Method, r.Path)
-	// }
-
 	return g
 }

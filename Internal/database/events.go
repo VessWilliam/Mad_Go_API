@@ -28,7 +28,9 @@ func (m *EventModel) Insert(event *Event) error {
 
 	fmt.Println(event)
 
-	query := "INSERT INTO events (owner_id, name, description, date, location) VALUES (?, ?, ?, ?, ?) RETURNING id"
+	query := `INSERT INTO events (owner_id, name, description, date, location)
+          VALUES ($1, $2, $3, $4, $5)
+          RETURNING id`
 
 	err := m.DB.QueryRowContext(ctx, query,
 		event.OwnerId,
@@ -104,7 +106,7 @@ func (m *EventModel) Get(id int) (*Event, error) {
 		description, 
 		date, 
 		location
-	 from events where id = ?`
+	 from events where id = $1`
 
 	var event Event
 
@@ -132,7 +134,7 @@ func (m *EventModel) Update(event *Event) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := "Update events Set name = ?, description = ? , date = ?, location = ? where id = ?"
+	query := "Update events Set name = $1, description = $2 , date = $3, location = $4 where id = $5"
 
 	_, err := m.DB.ExecContext(ctx, query, event.Name, event.Description, event.Date.Time, event.Location, event.Id)
 	if err != nil {
@@ -146,7 +148,7 @@ func (m *EventModel) Delete(id int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := "Delete from events where id = ?"
+	query := "Delete from events where id = $1"
 
 	_, err := m.DB.ExecContext(ctx, query, id)
 	if err != nil {
