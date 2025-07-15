@@ -33,6 +33,7 @@ func (app *application) getAllEvents(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Fail to retrive events"})
+		return
 	}
 
 	c.JSON(http.StatusOK, events)
@@ -79,6 +80,7 @@ func (app *application) updateEvent(c *gin.Context) {
 
 	if existingEvent == nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Event Not Found"})
+		return
 
 	}
 
@@ -105,11 +107,90 @@ func (app *application) deleteEvent(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event Id"})
+		return
 	}
 
 	if err := app.models.Events.Delete(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Faied to delete event"})
+		return
 	}
 
 	c.JSON(http.StatusNoContent, nil)
+}
+
+func (app *application) addAttendenceToEvent(c *gin.Context) {
+	eventId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event Id"})
+		return
+	}
+
+	userId, err := strconv.Atoi(c.Param("userId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User id"})
+		return
+	}
+
+	event, err := app.models.Events.Get(eventId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Fail to retrive event"})
+		return
+	}
+
+	if event == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Event not found"})
+		return
+	}
+
+	userToAdd, err := app.models.Users.Get(userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Fail to retrive User"})
+		return
+	}
+
+	if userToAdd == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	existingAttendence, err := app.models.Attendence.GetByEventAndAttendence(event.Id, userToAdd.Id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Fail to retrive Attendence"})
+		return
+	}
+
+	if existingAttendence == nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "Attendence already exist"})
+		return
+	}
+
+	attendence := database.Attendence{
+		EventId: event.Id,
+		UserId:  userToAdd.Id,
+	}
+
+	_, err = app.models.Attendence.Insert(&attendence)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrive attendence"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, attendence)
+}
+
+func (app *application) getAttendenceForEvent(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event id"})
+		return
+	}
+
+	users, err := app.models.Attendence.GetAttendenceByEvent(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to retrive attendence for event"})
+		return
+	}
+
+	c.JSON(http.StatusOK, users)
 }
