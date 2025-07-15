@@ -1,3 +1,4 @@
-﻿# Mad GoGinAPI
+﻿# Mad GoGinAPI 🧸
 
-using Gin framework with go  
+- Using Gin with Go  
+- Connect postgres DB  
