@@ -1,11 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	env "rest_api_gin/internal/.env"
 	"rest_api_gin/internal/database"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/lib/pq"
 )
@@ -19,13 +19,13 @@ type application struct {
 func main() {
 	dsn := "postgres://postgres:root123@localhost:5433/madevent?sslmode=disable"
 
-	db, err := sql.Open("postgres", dsn)
+	dbx, err := sqlx.Open("postgres", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
+	defer dbx.Close()
 
-	models := database.NewModels(db)
+	models := database.NewModels(dbx.DB)
 	app := &application{
 		port:      env.GetEnvInt("PORT", 8080),
 		jwtSecret: env.GetEnvString("JWT_SECRET", "vesswilliam"),

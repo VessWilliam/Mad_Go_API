@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"os"
 	"strconv"
@@ -9,6 +8,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/jmoiron/sqlx"
 
 	_ "github.com/lib/pq"
 )
@@ -21,14 +21,14 @@ func main() {
 	direction := os.Args[1]
 
 	connectionstring := "postgres://postgres:root123@localhost:5433/madevent?sslmode=disable"
-	db, err := sql.Open("postgres", connectionstring)
+	dbx, err := sqlx.Open("postgres", connectionstring)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	defer db.Close()
+	defer dbx.Close()
 
-	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	driver, err := postgres.WithInstance(dbx.DB, &postgres.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
