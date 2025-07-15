@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,9 +21,9 @@ func (app *application) routes() http.Handler {
 
 	}
 
-	for _, r := range g.Routes() {
-		log.Printf("[ROUTE] %s %s", r.Method, r.Path)
-	}
+	// for _, r := range g.Routes() {
+	// 	log.Printf("[ROUTE] %s %s", r.Method, r.Path)
+	// }
 
 	return g
 }

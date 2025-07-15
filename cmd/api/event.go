@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"rest_api_gin/internal/database"
 	"strconv"
@@ -40,6 +41,8 @@ func (app *application) getAllEvents(c *gin.Context) {
 func (app *application) getEvent(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 
+	fmt.Println(id)
+
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
@@ -51,8 +54,9 @@ func (app *application) getEvent(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Event not found"})
 	}
 
-	if err != nil {
+	if event == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrive event"})
+		return
 	}
 
 	c.JSON(http.StatusOK, event)
@@ -92,7 +96,7 @@ func (app *application) updateEvent(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, existingEvent)
+	c.JSON(http.StatusOK, updatedEvent)
 
 }
 
