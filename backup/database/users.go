@@ -4,11 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"log"
+	utils "rest_api_gin/internal/Utils"
 	"time"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type UserModel struct {
-	DB *sql.DB
+	DB *sqlx.DB
 }
 
 type User struct {
@@ -22,15 +25,15 @@ func (m *UserModel) Insert(user *User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := "Insert into users (email, password, name) values ($1,$2,$3) returning id"
+	query := `Insert into users (email, password, name) 
+	 values (:email,:password,:name)
+	 returning id`
 
-	err := m.DB.QueryRowContext(ctx, query, user.Email, user.Password, user.Name).Scan(&user.Id)
-	if err != nil {
-		log.Println("Insert User Error:", err)
+	result := utils.NameGetContext(ctx, m.DB, query, &user.Id, user)
+	if result != nil {
+		log.Println("Insert User Error:", result)
 	}
-
-	return err
-
+	return result
 }
 
 func (m *UserModel) Get(id int) (*User, error) {

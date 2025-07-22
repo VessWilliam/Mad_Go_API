@@ -1,6 +1,8 @@
 package database
 
-import "database/sql"
+import (
+	"github.com/jmoiron/sqlx"
+)
 
 type Models struct {
 	Users      UserModel
@@ -8,7 +10,7 @@ type Models struct {
 	Attendence AttendenceModel
 }
 
-func NewModels(db *sql.DB) Models {
+func NewModels(db *sqlx.DB) Models {
 	return Models{
 		Users:      UserModel{DB: db},
 		Events:     EventModel{DB: db},

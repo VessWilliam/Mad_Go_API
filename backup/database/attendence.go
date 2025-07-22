@@ -5,10 +5,12 @@ import (
 	"database/sql"
 	"log"
 	"time"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type AttendenceModel struct {
-	DB *sql.DB
+	DB *sqlx.DB
 }
 
 type Attendence struct {

@@ -7,10 +7,12 @@ import (
 	"log"
 	utils "rest_api_gin/internal/Utils"
 	"time"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type EventModel struct {
-	DB *sql.DB
+	DB *sqlx.DB
 }
 
 type Event struct {
