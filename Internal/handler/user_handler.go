@@ -39,3 +39,7 @@ func (h *UserHandle) RegisterUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"id": user.Id})
 
 }
+
+func (h *UserHandle) GetUser(c *gin.Context) {
+
+}

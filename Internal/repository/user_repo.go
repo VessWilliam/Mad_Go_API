@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	utils "rest_api_gin/internal/Utils"
+	"fmt"
 	"rest_api_gin/internal/domains"
 	"time"
 
@@ -26,10 +26,30 @@ func (r *UserRepo) Insert(user *domains.User) error {
 	   values (:email, :password, :name) returning id
 	`
 
-	return utils.NameGetContext(ctx, r.DB, query, &user.Id, user)
+	row, err := r.DB.NamedQueryContext(ctx, query, user)
+	if err != nil {
+		return err
+	}
+	defer row.Close()
+
+	if row.Next() {
+		return row.Scan(&user.Id)
+	}
+
+	return fmt.Errorf("Insert fail: no Id returned")
 }
 
-// Get implements domains.UserRepo.
-func (r *UserRepo) Get(id int) (*domains.User, error) {
-	panic("unimplemented")
+func (r *UserRepo) GetAll() ([]*domains.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var users []*domains.User
+	query := `select * from users`
+
+	err := r.DB.SelectContext(ctx, &users, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, err
 }

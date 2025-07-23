@@ -9,5 +9,5 @@ type User struct {
 
 type UserRepo interface {
 	Insert(user *User) error
-	Get(id int) (*User, error)
+	GetAll() ([]*User, error)
 }

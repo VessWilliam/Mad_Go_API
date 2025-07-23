@@ -12,6 +12,7 @@ func SetupRouter(userHandle *handler.UserHandle) *gin.Engine {
 	api := router.Group("/api")
 	{
 		api.POST("/register", userHandle.RegisterUser)
+		api.GET("/getall", userHandle.GetUser)
 	}
 
 	return router
