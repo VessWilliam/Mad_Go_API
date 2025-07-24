@@ -41,16 +41,42 @@ func (h *UserHandle) RegisterUser(c *gin.Context) {
 }
 
 func (h *UserHandle) GetUser(c *gin.Context) {
+
 	userlist, err := h.UserService.GetAllUser()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	dtoList := make([]dtos.GetSingleUserResponse, 0, len(userlist))
+
+	for _, user := range userlist {
+		dto := dtos.GetSingleUserResponse{
+			Email: user.Email,
+			Name:  user.Name,
+		}
+		dtoList = append(dtoList, dto)
+	}
+
 	response := dtos.GetAllUserResponse{
-		UserList: userlist,
+		UserList: dtoList,
 	}
 
 	c.JSON(http.StatusOK, response)
+}
 
+func (h *UserHandle) GetById(c *gin.Context) {
+	id := c.Param("id")
+	user, err := h.UserService.GetUserById(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	response := dtos.GetSingleUserResponse{
+		Email: user.Email,
+		Name:  user.Name,
+	}
+
+	c.JSON(http.StatusOK, response)
 }

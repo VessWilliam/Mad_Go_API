@@ -23,20 +23,15 @@ func (r *UserRepo) Insert(user *domains.User) error {
 
 	query := `
 	   Insert into users (email, password, name) 
-	   values (:email, :password, :name) returning id
+	   values ($1, $2, $3) returning id
 	`
 
-	row, err := r.DB.NamedQueryContext(ctx, query, user)
+	err := r.DB.QueryRowContext(ctx, query, user.Email, user.Password, user.Name).Scan(&user.Id)
 	if err != nil {
-		return err
-	}
-	defer row.Close()
-
-	if row.Next() {
-		return row.Scan(&user.Id)
+		return fmt.Errorf("insert failed %v", err)
 	}
 
-	return fmt.Errorf("Insert fail: no Id returned")
+	return nil
 }
 
 func (r *UserRepo) GetAll() ([]*domains.User, error) {
@@ -48,8 +43,23 @@ func (r *UserRepo) GetAll() ([]*domains.User, error) {
 
 	err := r.DB.SelectContext(ctx, &users, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get all user %v", err)
 	}
 
-	return users, err
+	return users, nil
+}
+
+func (r *UserRepo) GetById(id string) (*domains.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var user domains.User
+	query := `select * from users where id = $1`
+
+	err := r.DB.GetContext(ctx, &user, query, id)
+	if err != nil {
+		return nil, fmt.Errorf("get user by id %v", err)
+	}
+
+	return &user, nil
 }

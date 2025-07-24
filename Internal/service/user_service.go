@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"rest_api_gin/internal/domains"
 )
 
@@ -28,4 +29,16 @@ func (s *UserService) GetAllUser() ([]*domains.User, error) {
 		return nil, err
 	}
 	return users, nil
+
+}
+func (s *UserService) GetUserById(id string) (*domains.User, error) {
+	if id == "" {
+		return nil, fmt.Errorf("user get by id failed: id = %q", id)
+	}
+
+	user, err := s.repo.GetById(id)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }

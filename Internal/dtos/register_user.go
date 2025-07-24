@@ -1,7 +1,5 @@
 package dtos
 
-import "rest_api_gin/internal/domains"
-
 type RegisterUserRequest struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=6"`
@@ -9,5 +7,10 @@ type RegisterUserRequest struct {
 }
 
 type GetAllUserResponse struct {
-	UserList []*domains.User `json:"Userlist"`
+	UserList []GetSingleUserResponse `json:"Userlist"`
+}
+
+type GetSingleUserResponse struct {
+	Email string `json:"email"`
+	Name  string `json:"name"`
 }

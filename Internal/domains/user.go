@@ -10,4 +10,5 @@ type User struct {
 type UserRepo interface {
 	Insert(user *User) error
 	GetAll() ([]*User, error)
+	GetById(id string) (*User, error)
 }
