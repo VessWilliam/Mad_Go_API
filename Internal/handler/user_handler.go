@@ -41,5 +41,16 @@ func (h *UserHandle) RegisterUser(c *gin.Context) {
 }
 
 func (h *UserHandle) GetUser(c *gin.Context) {
+	userlist, err := h.UserService.GetAllUser()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	response := dtos.GetAllUserResponse{
+		UserList: userlist,
+	}
+
+	c.JSON(http.StatusOK, response)
 
 }
