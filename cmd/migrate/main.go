@@ -3,12 +3,14 @@ package main
 import (
 	"log"
 	"os"
+	"rest_api_gin/internal/seed"
 	"strconv"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jmoiron/sqlx"
+	"github.com/joho/godotenv"
 
 	_ "github.com/lib/pq"
 )
@@ -20,8 +22,14 @@ func main() {
 
 	direction := os.Args[1]
 
-	connectionstring := "postgres://postgres:root123@localhost:5433/madevent?sslmode=disable"
-	dbx, err := sqlx.Open("postgres", connectionstring)
+	err := godotenv.Load()
+	if err != nil {
+		return
+	}
+
+	connectString := os.Getenv("DATABASE_URL")
+
+	dbx, err := sqlx.Open("postgres", connectString)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,6 +55,10 @@ func main() {
 		if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 			log.Fatal(err)
 		}
+		if err := seed.Seeder(dbx); err != nil {
+			log.Fatal(err)
+		}
+		defer dbx.Close()
 	case "down":
 		if err := m.Down(); err != nil && err != migrate.ErrNoChange {
 			log.Fatal(err)
