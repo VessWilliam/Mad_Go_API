@@ -1,4 +1,6 @@
 ﻿# Mad GoGinAPI 🧸
 
 - Using Gin with Go  
-- Connect postgres DB  
+- Using postgres DB
+- Golang Migrate
+- Sqlx  
