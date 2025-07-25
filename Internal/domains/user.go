@@ -1,10 +1,10 @@
 package domains
 
 type User struct {
-	Id       int
-	Email    string
-	Name     string
-	Password string
+	Id       int    `db:"id"`
+	Email    string `db:"email"`
+	Name     string `db:"name"`
+	Password string `db:"password"`
 }
 
 type UserRepo interface {

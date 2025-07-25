@@ -4,17 +4,19 @@ import (
 	"rest_api_gin/internal/handler"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetupRouter(userHandle *handler.UserHandle) *gin.Engine {
 	router := gin.Default()
 
-	api := router.Group("/api")
-	{
-		api.POST("/register", userHandle.RegisterUser)
-		api.GET("/getall", userHandle.GetUser)
-		api.GET("/getbyid/:id", userHandle.GetById)
-	}
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	apiGroup := router.Group("/api")
+	apiGroup.GET("/getall", userHandle.GetUser)
+	apiGroup.POST("/register", userHandle.RegisterUser)
+	apiGroup.GET("/getbyid/:id", userHandle.GetById)
 
 	return router
 }

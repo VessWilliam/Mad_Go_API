@@ -1,0 +1,117 @@
+basePath: /api
+definitions:
+  rest_api_gin_internal_dtos.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  rest_api_gin_internal_dtos.GetAllUserResponse:
+    properties:
+      Userlist:
+        items:
+          $ref: '#/definitions/rest_api_gin_internal_dtos.GetSingleUserResponse'
+        type: array
+    type: object
+  rest_api_gin_internal_dtos.GetSingleUserResponse:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+    type: object
+  rest_api_gin_internal_dtos.RegisterUserRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample server.
+  title: GO & Gin API
+  version: "1.0"
+paths:
+  /getall:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all registered users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.GetAllUserResponse'
+        "500":
+          description: Internal server Error
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      summary: Get all users
+      tags:
+      - users
+  /getbyid/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a single user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.GetSingleUserResponse'
+        "500":
+          description: Internal server Error
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      summary: Get user by ID
+      tags:
+      - users
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Registers a user with email, password, and name
+      parameters:
+      - description: User registration data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/rest_api_gin_internal_dtos.RegisterUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.GetSingleUserResponse'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+        "500":
+          description: Could not register
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - users
+swagger: "2.0"

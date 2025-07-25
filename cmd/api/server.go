@@ -11,10 +11,13 @@ import (
 	"rest_api_gin/internal/service"
 	"time"
 
+	_ "rest_api_gin/docs"
+
+	_ "github.com/lib/pq"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 )
 
 type application struct {
@@ -51,6 +54,7 @@ func NewApp() (*application, error) {
 }
 
 func (a *application) Serve() error {
+
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", a.port),
 		Handler:      a.router,

@@ -1,0 +1,178 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server.",
+        "title": "GO \u0026 Gin API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api",
+    "paths": {
+        "/getall": {
+            "get": {
+                "description": "Retrieve all registered users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get all users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.GetAllUserResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server Error",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/getbyid/{id}": {
+            "get": {
+                "description": "Retrieve a single user by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.GetSingleUserResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server Error",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "Registers a user with email, password, and name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "User registration data",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.RegisterUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.GetSingleUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Could not register",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "rest_api_gin_internal_dtos.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest_api_gin_internal_dtos.GetAllUserResponse": {
+            "type": "object",
+            "properties": {
+                "Userlist": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/rest_api_gin_internal_dtos.GetSingleUserResponse"
+                    }
+                }
+            }
+        },
+        "rest_api_gin_internal_dtos.GetSingleUserResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest_api_gin_internal_dtos.RegisterUserRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                }
+            }
+        }
+    }
+}
