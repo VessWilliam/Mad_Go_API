@@ -12,12 +12,26 @@ definitions:
           $ref: '#/definitions/rest_api_gin_internal_dtos.GetSingleUserResponse'
         type: array
     type: object
+  rest_api_gin_internal_dtos.GetSingleRoleResponse:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   rest_api_gin_internal_dtos.GetSingleUserResponse:
     properties:
       email:
         type: string
       name:
         type: string
+    type: object
+  rest_api_gin_internal_dtos.RegisterRoleRequest:
+    properties:
+      name:
+        type: string
+    required:
+    - name
     type: object
   rest_api_gin_internal_dtos.RegisterUserRequest:
     properties:
@@ -114,4 +128,34 @@ paths:
       summary: Register a new user
       tags:
       - users
+  /register_role:
+    post:
+      consumes:
+      - application/json
+      description: Registers a role with name
+      parameters:
+      - description: Role registration data
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/rest_api_gin_internal_dtos.RegisterRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.GetSingleRoleResponse'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+        "500":
+          description: Could not register
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      summary: Register a new role
+      tags:
+      - role
 swagger: "2.0"

@@ -40,10 +40,18 @@ func NewApp() (*application, error) {
 		return nil, err
 	}
 
+	// Register User route
 	userRepo := repository.NewUserRepo(db)
 	userService := service.NewUserService(userRepo)
 	userHandle := handler.NewUserHandler(userService)
-	router := router.SetupRouter(userHandle)
+
+	// Register Role route
+	roleRepo := repository.NewRolesRepo(db)
+	roleService := service.NewRolesService(roleRepo)
+	roleHandle := handler.NewRoleHandle(roleService)
+
+	//Assign All handle
+	router := router.SetupRouter(userHandle, roleHandle)
 
 	app := &application{
 		port:   PORT,

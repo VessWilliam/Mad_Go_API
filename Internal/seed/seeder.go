@@ -2,6 +2,7 @@ package seed
 
 import (
 	"log"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 	"golang.org/x/crypto/bcrypt"
@@ -9,7 +10,7 @@ import (
 
 func Seeder(dbx *sqlx.DB) error {
 
-	name := "Admin"
+	name := "ADMIN"
 	email := "Admin@gmail.com"
 	password := "root123"
 
@@ -37,7 +38,7 @@ func Seeder(dbx *sqlx.DB) error {
 	err = dbx.QueryRowx(
 		`insert into users (email, name, password) values ($1, $2, $3) returning id`,
 		email,
-		name,
+		strings.ToUpper(name),
 		string(hash),
 	).Scan(&userId)
 

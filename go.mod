@@ -2,7 +2,7 @@ module rest_api_gin
 
 go 1.24.5
 
-require golang.org/x/crypto v0.40.0 // indirect
+require golang.org/x/crypto v0.40.0
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect

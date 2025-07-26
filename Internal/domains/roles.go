@@ -6,4 +6,5 @@ type Roles struct {
 }
 
 type RolesRepo interface {
+	Insert(role *Roles) error
 }
