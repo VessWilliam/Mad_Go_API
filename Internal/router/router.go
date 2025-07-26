@@ -17,12 +17,15 @@ func SetupRouter(userHandle *handler.UserHandle,
 	apiGroup := router.Group("/api")
 
 	//User Route
-	apiGroup.GET("/getall", userHandle.GetUser)
-	apiGroup.POST("/register", userHandle.RegisterUser)
-	apiGroup.GET("/getbyid/:id", userHandle.GetById)
+	apiGroup.GET("/get_users", userHandle.GetUsers)
+	apiGroup.POST("/register_user", userHandle.RegisterUser)
+	apiGroup.GET("/getbyid_user/:id", userHandle.GetById)
 
 	//Role Route
+	apiGroup.GET("/get_roles", roleHandle.GetRoles)
 	apiGroup.POST("/register_role", roleHandle.RegisterRole)
+	apiGroup.GET("/getbyid_role/:id", roleHandle.GetRolesById)
+	apiGroup.DELETE("/deletebyid_role/:id", roleHandle.DeleteById)
 
 	return router
 }

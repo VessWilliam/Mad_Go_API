@@ -15,7 +15,74 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/getall": {
+        "/deletebyid_role/{id}": {
+            "delete": {
+                "description": "Delete a single role by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "Delete role by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Role ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.GetSingleRoleResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server Error",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_roles": {
+            "get": {
+                "description": "Retrieve all registered roles",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "Get all roles",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.GetAllRoleResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server Error",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_users": {
             "get": {
                 "description": "Retrieve all registered users",
                 "consumes": [
@@ -44,7 +111,45 @@ const docTemplate = `{
                 }
             }
         },
-        "/getbyid/{id}": {
+        "/getbyid_role/{id}": {
+            "get": {
+                "description": "Retrieve a single role by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "Get role by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Role ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.GetSingleRoleResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server Error",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/getbyid_user/{id}": {
             "get": {
                 "description": "Retrieve a single user by ID",
                 "consumes": [
@@ -75,52 +180,6 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal server Error",
-                        "schema": {
-                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/register": {
-            "post": {
-                "description": "Registers a user with email, password, and name",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Register a new user",
-                "parameters": [
-                    {
-                        "description": "User registration data",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/rest_api_gin_internal_dtos.RegisterUserRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/rest_api_gin_internal_dtos.GetSingleUserResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid input",
-                        "schema": {
-                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Could not register",
                         "schema": {
                             "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
                         }
@@ -173,6 +232,52 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/register_user": {
+            "post": {
+                "description": "Registers a user with email, password, and name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "User registration data",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.RegisterUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.GetSingleUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Could not register",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -181,6 +286,17 @@ const docTemplate = `{
             "properties": {
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "rest_api_gin_internal_dtos.GetAllRoleResponse": {
+            "type": "object",
+            "properties": {
+                "Rolelist": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/rest_api_gin_internal_dtos.GetSingleRoleResponse"
+                    }
                 }
             }
         },
@@ -211,6 +327,9 @@ const docTemplate = `{
             "properties": {
                 "email": {
                     "type": "string"
+                },
+                "id": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"

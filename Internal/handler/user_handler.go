@@ -27,7 +27,7 @@ func NewUserHandler(s *service.UserService) *UserHandle {
 // @Success      201   {object}  dtos.GetSingleUserResponse
 // @Failure      400   {object}  dtos.ErrorResponse "Invalid input"
 // @Failure      500   {object}  dtos.ErrorResponse "Could not register"
-// @Router       /register [post]
+// @Router       /register_user [post]
 func (h *UserHandle) RegisterUser(c *gin.Context) {
 
 	var req dtos.RegisterUserRequest
@@ -59,8 +59,8 @@ func (h *UserHandle) RegisterUser(c *gin.Context) {
 // @Produce      json
 // @Success      200  {object}  dtos.GetAllUserResponse
 // @Failure      500   {object}  dtos.ErrorResponse "Internal server Error"
-// @Router       /getall [get]
-func (h *UserHandle) GetUser(c *gin.Context) {
+// @Router       /get_users [get]
+func (h *UserHandle) GetUsers(c *gin.Context) {
 
 	userlist, err := h.UserService.GetAllUser()
 	if err != nil {
@@ -72,8 +72,9 @@ func (h *UserHandle) GetUser(c *gin.Context) {
 
 	for _, user := range userlist {
 		dto := dtos.GetSingleUserResponse{
-			Email: user.Email,
+			Id:    user.Id,
 			Name:  user.Name,
+			Email: user.Email,
 		}
 		dtoList = append(dtoList, dto)
 	}
@@ -94,7 +95,7 @@ func (h *UserHandle) GetUser(c *gin.Context) {
 // @Param        id   path      string  true  "User ID"
 // @Success      200  {object}  dtos.GetSingleUserResponse
 // @Failure      500   {object}  dtos.ErrorResponse "Internal server Error"
-// @Router       /getbyid/{id} [get]
+// @Router       /getbyid_user/{id} [get]
 func (h *UserHandle) GetById(c *gin.Context) {
 	id := c.Param("id")
 	user, err := h.UserService.GetUserById(id)
@@ -104,8 +105,9 @@ func (h *UserHandle) GetById(c *gin.Context) {
 	}
 
 	response := dtos.GetSingleUserResponse{
-		Email: user.Email,
+		Id:    user.Id,
 		Name:  user.Name,
+		Email: user.Email,
 	}
 
 	c.JSON(http.StatusOK, response)

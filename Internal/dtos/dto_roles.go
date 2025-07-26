@@ -5,6 +5,11 @@ type RegisterRoleRequest struct {
 	Name string `json:"name" binding:"required"`
 }
 
+// swagger:model GetAllRoleResponse
+type GetAllRoleResponse struct {
+	RoleList []GetSingleRoleResponse `json:"Rolelist"`
+}
+
 // swagger:model RegisterRoleResponse
 type GetSingleRoleResponse struct {
 	Id   int    `json:"id"`

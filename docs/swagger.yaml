@@ -5,6 +5,13 @@ definitions:
       message:
         type: string
     type: object
+  rest_api_gin_internal_dtos.GetAllRoleResponse:
+    properties:
+      Rolelist:
+        items:
+          $ref: '#/definitions/rest_api_gin_internal_dtos.GetSingleRoleResponse'
+        type: array
+    type: object
   rest_api_gin_internal_dtos.GetAllUserResponse:
     properties:
       Userlist:
@@ -23,6 +30,8 @@ definitions:
     properties:
       email:
         type: string
+      id:
+        type: integer
       name:
         type: string
     type: object
@@ -54,7 +63,51 @@ info:
   title: GO & Gin API
   version: "1.0"
 paths:
-  /getall:
+  /deletebyid_role/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a single role by ID
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.GetSingleRoleResponse'
+        "500":
+          description: Internal server Error
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      summary: Delete role by ID
+      tags:
+      - role
+  /get_roles:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all registered roles
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.GetAllRoleResponse'
+        "500":
+          description: Internal server Error
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      summary: Get all roles
+      tags:
+      - role
+  /get_users:
     get:
       consumes:
       - application/json
@@ -73,7 +126,32 @@ paths:
       summary: Get all users
       tags:
       - users
-  /getbyid/{id}:
+  /getbyid_role/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a single role by ID
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.GetSingleRoleResponse'
+        "500":
+          description: Internal server Error
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      summary: Get role by ID
+      tags:
+      - role
+  /getbyid_user/{id}:
     get:
       consumes:
       - application/json
@@ -96,36 +174,6 @@ paths:
           schema:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
       summary: Get user by ID
-      tags:
-      - users
-  /register:
-    post:
-      consumes:
-      - application/json
-      description: Registers a user with email, password, and name
-      parameters:
-      - description: User registration data
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/rest_api_gin_internal_dtos.RegisterUserRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/rest_api_gin_internal_dtos.GetSingleUserResponse'
-        "400":
-          description: Invalid input
-          schema:
-            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
-        "500":
-          description: Could not register
-          schema:
-            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
-      summary: Register a new user
       tags:
       - users
   /register_role:
@@ -158,4 +206,34 @@ paths:
       summary: Register a new role
       tags:
       - role
+  /register_user:
+    post:
+      consumes:
+      - application/json
+      description: Registers a user with email, password, and name
+      parameters:
+      - description: User registration data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/rest_api_gin_internal_dtos.RegisterUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.GetSingleUserResponse'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+        "500":
+          description: Could not register
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - users
 swagger: "2.0"
