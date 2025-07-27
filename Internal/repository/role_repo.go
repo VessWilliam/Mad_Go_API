@@ -59,7 +59,6 @@ func (r *RoleRepo) GetById(id string) (*domains.Role, error) {
 	}
 
 	return &role, nil
-
 }
 
 func (r *RoleRepo) DeleteById(id string) error {

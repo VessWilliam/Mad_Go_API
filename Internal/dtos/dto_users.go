@@ -14,7 +14,12 @@ type GetAllUserResponse struct {
 
 // swagger:model GetSingleUserResponse
 type GetSingleUserResponse struct {
-	Id    int    `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Id    int        `json:"id"`
+	Name  string     `json:"name"`
+	Email string     `json:"email"`
+	Roles []RoleList `json:"roles"`
+}
+
+type RoleList struct {
+	Name string
 }

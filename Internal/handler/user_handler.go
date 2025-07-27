@@ -104,10 +104,19 @@ func (h *UserHandle) GetById(c *gin.Context) {
 		return
 	}
 
+	roleList := make([]dtos.RoleList, 0, len(user.Role))
+	for _, role := range user.Role {
+		dto := dtos.RoleList{
+			Name: role.Name,
+		}
+		roleList = append(roleList, dto)
+	}
+
 	response := dtos.GetSingleUserResponse{
 		Id:    user.Id,
 		Name:  user.Name,
 		Email: user.Email,
+		Roles: roleList,
 	}
 
 	c.JSON(http.StatusOK, response)

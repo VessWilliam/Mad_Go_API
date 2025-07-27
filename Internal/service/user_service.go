@@ -42,5 +42,11 @@ func (s *UserService) GetUserById(id string) (*domains.User, error) {
 		return nil, fmt.Errorf("user get by id failed: id = %q, err: %w", id, err)
 	}
 
+	roles, err := s.repo.GetRolesByUserId(id)
+	if err != nil {
+		return nil, fmt.Errorf("user get role failed: %v", err)
+	}
+
+	user.Role = roles
 	return user, nil
 }

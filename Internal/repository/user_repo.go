@@ -63,3 +63,20 @@ func (r *UserRepo) GetById(id string) (*domains.User, error) {
 
 	return &user, nil
 }
+
+func (r *UserRepo) GetRolesByUserId(userId string) ([]domains.Role, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `select r.id, r.name 
+	from roles r inner join user_roles ur 
+	on r.id = ur.role_id 
+	where user_id = $1`
+
+	var roles []domains.Role
+	if err := r.DB.SelectContext(ctx, &roles, query, userId); err != nil {
+		return nil, fmt.Errorf("get roles for user %v failed: %w", userId, err)
+	}
+
+	return roles, nil
+}
