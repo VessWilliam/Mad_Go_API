@@ -25,7 +25,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "assigns role"
+                    "assign role"
                 ],
                 "summary": "Assign Roles to User",
                 "parameters": [
@@ -71,7 +71,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "role"
+                    "roles"
                 ],
                 "summary": "Delete role by ID",
                 "parameters": [
@@ -109,7 +109,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "role"
+                    "roles"
                 ],
                 "summary": "Get all roles",
                 "responses": {
@@ -167,7 +167,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "role"
+                    "roles"
                 ],
                 "summary": "Get role by ID",
                 "parameters": [
@@ -243,7 +243,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "role"
+                    "roles"
                 ],
                 "summary": "Register a new role",
                 "parameters": [
@@ -318,6 +318,98 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Could not register",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/update_role": {
+            "put": {
+                "description": "Update role body",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "roles"
+                ],
+                "summary": "Update Role",
+                "parameters": [
+                    {
+                        "description": "Role Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.UpdateRoleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/update_user": {
+            "put": {
+                "description": "Update user body",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update User",
+                "parameters": [
+                    {
+                        "description": "User Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.UpdateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
                         }
@@ -448,6 +540,34 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "rest_api_gin_internal_dtos.UpdateRoleRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest_api_gin_internal_dtos.UpdateUserRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
         }
     }
 }`
@@ -459,7 +579,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "GO & Gin API",
-	Description:      "This is a sample server.",
+	Description:      "User Management System Sample App.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

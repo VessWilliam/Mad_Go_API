@@ -10,6 +10,7 @@ type User struct {
 
 type UserRepo interface {
 	Insert(user *User) error
+	Update(user *User) error
 	GetAll() ([]*User, error)
 	GetById(id int) (*User, error)
 	GetRolesByUserId(userId int) ([]Role, error)

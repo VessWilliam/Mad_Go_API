@@ -108,3 +108,17 @@ func (r *UserRepo) AssignRolesToRoles(userId int, roleIds []int) error {
 
 	return tx.Commit()
 }
+
+func (r *UserRepo) Update(user *domains.User) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+	  update users SET name = $1, email = $2 WHERE id = $3;
+	`
+	_, err := r.DB.ExecContext(ctx, query, user.Name, user.Email, user.Id)
+	if err != nil {
+		return fmt.Errorf("update users error : %v", err)
+	}
+	return nil
+}

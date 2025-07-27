@@ -18,12 +18,14 @@ func SetupRouter(userHandle *handler.UserHandle,
 
 	//User Route
 	apiGroup.GET("/get_users", userHandle.GetUsers)
-	apiGroup.POST("/register_user", userHandle.RegisterUser)
+	apiGroup.PUT("/update_user", userHandle.UpdateUser)
 	apiGroup.GET("/getbyid_user/:id", userHandle.GetById)
+	apiGroup.POST("/register_user", userHandle.RegisterUser)
 	apiGroup.PUT("/assign-roles", userHandle.AssignRolesToUser)
 
 	//Role Route
 	apiGroup.GET("/get_roles", roleHandle.GetRoles)
+	apiGroup.PUT("/update_role", roleHandle.UpdateRole)
 	apiGroup.POST("/register_role", roleHandle.RegisterRole)
 	apiGroup.GET("/getbyid_role/:id", roleHandle.GetRolesById)
 	apiGroup.DELETE("/deletebyid_role/:id", roleHandle.DeleteById)

@@ -7,6 +7,13 @@ type RegisterUserRequest struct {
 	Name     string `json:"name" binding:"required"`
 }
 
+// swagger:model UpdateUserRequest
+type UpdateUserRequest struct {
+	Id    int    `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+
 // swagger:model GetAllUserResponse
 type GetAllUserResponse struct {
 	UserList []GetSingleUserResponse `json:"Userlist"`
@@ -20,11 +27,12 @@ type GetSingleUserResponse struct {
 	Roles []RoleList `json:"roles"`
 }
 
-type RoleList struct {
-	Name string
-}
-
+// swagger:model AssignRolesRequest
 type AssignRolesRequest struct {
 	UserId  int   `json:"userId"`
 	RoleIds []int `json:"roles"`
+}
+
+type RoleList struct {
+	Name string
 }

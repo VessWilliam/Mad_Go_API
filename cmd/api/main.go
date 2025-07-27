@@ -4,7 +4,7 @@ import "log"
 
 // @title           GO & Gin API
 // @version         1.0
-// @description     This is a sample server.
+// @description     User Management System Sample App.
 // @host      localhost:8080
 // @BasePath  /api
 

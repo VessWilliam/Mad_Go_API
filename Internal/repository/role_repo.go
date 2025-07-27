@@ -73,3 +73,15 @@ func (r *RoleRepo) DeleteById(id int) error {
 
 	return nil
 }
+
+func (r *RoleRepo) Update(role *domains.Role) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `update roles set name = $1 where id = $2`
+	_, err := r.DB.ExecContext(ctx, query, role.Name, role.Id)
+	if err != nil {
+		return fmt.Errorf("update role fail :%v", err)
+	}
+	return nil
+}

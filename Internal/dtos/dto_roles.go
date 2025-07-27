@@ -15,3 +15,9 @@ type GetSingleRoleResponse struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
 }
+
+// swagger:model UpdateRoleRequest
+type UpdateRoleRequest struct {
+	Id   int    `json:"id"`
+	Name string `json:"name" binding:"required"`
+}

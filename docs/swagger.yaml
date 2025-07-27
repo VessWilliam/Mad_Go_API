@@ -79,10 +79,28 @@ definitions:
       message:
         type: string
     type: object
+  rest_api_gin_internal_dtos.UpdateRoleRequest:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  rest_api_gin_internal_dtos.UpdateUserRequest:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
-  description: This is a sample server.
+  description: User Management System Sample App.
   title: GO & Gin API
   version: "1.0"
 paths:
@@ -115,7 +133,7 @@ paths:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
       summary: Assign Roles to User
       tags:
-      - assigns role
+      - assign role
   /deletebyid_role/{id}:
     delete:
       consumes:
@@ -140,7 +158,7 @@ paths:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
       summary: Delete role by ID
       tags:
-      - role
+      - roles
   /get_roles:
     get:
       consumes:
@@ -159,7 +177,7 @@ paths:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
       summary: Get all roles
       tags:
-      - role
+      - roles
   /get_users:
     get:
       consumes:
@@ -203,7 +221,7 @@ paths:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
       summary: Get role by ID
       tags:
-      - role
+      - roles
   /getbyid_user/{id}:
     get:
       consumes:
@@ -258,7 +276,7 @@ paths:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
       summary: Register a new role
       tags:
-      - role
+      - roles
   /register_user:
     post:
       consumes:
@@ -287,6 +305,66 @@ paths:
           schema:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
       summary: Register a new user
+      tags:
+      - users
+  /update_role:
+    put:
+      consumes:
+      - application/json
+      description: Update role body
+      parameters:
+      - description: Role Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/rest_api_gin_internal_dtos.UpdateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      summary: Update Role
+      tags:
+      - roles
+  /update_user:
+    put:
+      consumes:
+      - application/json
+      description: Update user body
+      parameters:
+      - description: User Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/rest_api_gin_internal_dtos.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      summary: Update User
       tags:
       - users
 swagger: "2.0"

@@ -17,7 +17,7 @@ func NewUserService(repo domains.UserRepo, roleRepo domains.RolesRepo) *UserServ
 	}
 }
 
-func (s *UserService) RegisterUser(user *domains.User) error {
+func (s *UserService) RegisterUserService(user *domains.User) error {
 
 	if user.Email == "" || user.Password == "" {
 		return fmt.Errorf("register fails : %v / %v",
@@ -27,16 +27,24 @@ func (s *UserService) RegisterUser(user *domains.User) error {
 	return s.repo.Insert(user)
 }
 
-func (s *UserService) GetAllUser() ([]*domains.User, error) {
+func (s *UserService) GetAllUserService() ([]*domains.User, error) {
 
 	users, err := s.repo.GetAll()
 	if err != nil {
 		return nil, fmt.Errorf("get all users failed: %v", err)
 	}
+
+	for _, user := range users {
+		roles, err := s.repo.GetRolesByUserId(user.Id)
+		if err != nil {
+			return nil, fmt.Errorf("get role in user failed: %v", err)
+		}
+		user.Role = roles
+	}
 	return users, nil
 
 }
-func (s *UserService) GetUserById(id int) (*domains.User, error) {
+func (s *UserService) GetUserByIdService(id int) (*domains.User, error) {
 	if id == 0 {
 		return nil, fmt.Errorf("user get by id not exist: id = %q", id)
 	}
@@ -55,9 +63,9 @@ func (s *UserService) GetUserById(id int) (*domains.User, error) {
 	return user, nil
 }
 
-func (s *UserService) AssignRolesToUser(userId int, roleIds []int) error {
+func (s *UserService) AssignRolesToUserService(userId int, roleIds []int) error {
 	if userId == 0 || len(roleIds) == 0 {
-		return fmt.Errorf("")
+		return fmt.Errorf("user id = %v  and  roleIds = %v is required ", userId, roleIds)
 	}
 
 	user, err := s.repo.GetById(userId)
@@ -74,6 +82,19 @@ func (s *UserService) AssignRolesToUser(userId int, roleIds []int) error {
 	err = s.repo.AssignRolesToRoles(user.Id, roleIds)
 	if err != nil {
 		return fmt.Errorf("failed to assign roles: %w", err)
+	}
+
+	return nil
+}
+
+func (s *UserService) UpdateUserService(user *domains.User) error {
+	if user == nil {
+		return fmt.Errorf("user object is require : %v", user)
+	}
+
+	err := s.repo.Update(user)
+	if err != nil {
+		return fmt.Errorf("update user is failed : %v", err)
 	}
 
 	return nil

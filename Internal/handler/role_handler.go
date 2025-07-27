@@ -22,7 +22,7 @@ func NewRoleHandle(s *service.RoleService) *RoleHandle {
 // RegisterUser godoc
 // @Summary      Register a new role
 // @Description  Registers a role with name
-// @Tags         role
+// @Tags         roles
 // @Accept       json
 // @Produce      json
 // @Param        role  body      dtos.RegisterRoleRequest  true  "Role registration data"
@@ -55,7 +55,7 @@ func (h *RoleHandle) RegisterRole(c *gin.Context) {
 // GetAllUsers godoc
 // @Summary      Get all roles
 // @Description  Retrieve all registered roles
-// @Tags         role
+// @Tags         roles
 // @Accept       json
 // @Produce      json
 // @Success      200   {object}  dtos.GetAllRoleResponse
@@ -89,7 +89,7 @@ func (h *RoleHandle) GetRoles(c *gin.Context) {
 // GetById godoc
 // @Summary      Get role by ID
 // @Description  Retrieve a single role by ID
-// @Tags         role
+// @Tags         roles
 // @Accept       json
 // @Produce      json
 // @Param        id   path      int  true  "Role ID"
@@ -100,11 +100,11 @@ func (h *RoleHandle) GetRolesById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dtos.ErrorResponse{Message: "Invalid role ID"})
+		c.JSON(http.StatusBadRequest, dtos.ErrorResponse{Message: "invalid role id"})
 		return
 	}
 
-	role, err := h.RoleService.GetRoleById(id)
+	role, err := h.RoleService.GetRoleByIdService(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dtos.ErrorResponse{Message: err.Error()})
 		return
@@ -120,7 +120,7 @@ func (h *RoleHandle) GetRolesById(c *gin.Context) {
 // GetById godoc
 // @Summary      Delete role by ID
 // @Description  Delete a single role by ID
-// @Tags         role
+// @Tags         roles
 // @Accept       json
 // @Produce      json
 // @Param        id   path      int  true  "Role ID"
@@ -130,19 +130,47 @@ func (h *RoleHandle) GetRolesById(c *gin.Context) {
 func (h *RoleHandle) DeleteById(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	role, err := h.RoleService.GetRoleById(id)
+	_, err := h.RoleService.GetRoleByIdService(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dtos.ErrorResponse{Message: err.Error()})
 		return
 	}
 
-	err = h.RoleService.DeleteById(id)
+	err = h.RoleService.DeleteByIdService(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dtos.ErrorResponse{Message: err.Error()})
 	}
 
-	c.JSON(http.StatusOK, dtos.GetSingleRoleResponse{
-		Id:   role.Id,
-		Name: role.Name,
-	})
+	c.JSON(http.StatusOK, dtos.SuccessResponse{Message: "deleted role success !"})
+}
+
+// Update Role godoc
+// @Summary      Update Role
+// @Description  Update role body
+// @Tags         roles
+// @Accept       json
+// @Produce      json
+// @Param        request body      dtos.UpdateRoleRequest  true  "Role Body"
+// @Success      200   {object}  dtos.SuccessResponse
+// @Failure      400   {object}  dtos.ErrorResponse
+// @Failure      500   {object}  dtos.ErrorResponse
+// @Router       /update_role [put]
+func (h *RoleHandle) UpdateRole(c *gin.Context) {
+	var req dtos.UpdateRoleRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, dtos.ErrorResponse{Message: "Invalid JSON format"})
+		return
+	}
+
+	role := domains.Role{
+		Id:   req.Id,
+		Name: req.Name,
+	}
+
+	if err := h.RoleService.UpdateRoleService(&role); err != nil {
+		c.JSON(http.StatusInternalServerError, dtos.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, dtos.SuccessResponse{Message: "role successfully updated"})
 }

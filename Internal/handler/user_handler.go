@@ -43,7 +43,7 @@ func (h *UserHandle) RegisterUser(c *gin.Context) {
 		Password: req.Password,
 	}
 
-	if err := h.UserService.RegisterUser(&user); err != nil {
+	if err := h.UserService.RegisterUserService(&user); err != nil {
 		c.JSON(http.StatusInternalServerError, dtos.ErrorResponse{Message: err.Error()})
 		return
 	}
@@ -67,19 +67,28 @@ func (h *UserHandle) RegisterUser(c *gin.Context) {
 // @Router       /get_users [get]
 func (h *UserHandle) GetUsers(c *gin.Context) {
 
-	userlist, err := h.UserService.GetAllUser()
+	userlist, err := h.UserService.GetAllUserService()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dtos.ErrorResponse{Message: err.Error()})
 		return
 	}
 
 	dtoList := make([]dtos.GetSingleUserResponse, 0, len(userlist))
-
 	for _, user := range userlist {
+
+		rolelist := make([]dtos.RoleList, 0, len(userlist))
+		for _, role := range user.Role {
+			roleDto := dtos.RoleList{
+				Name: role.Name,
+			}
+			rolelist = append(rolelist, roleDto)
+		}
+
 		dto := dtos.GetSingleUserResponse{
 			Id:    user.Id,
 			Name:  user.Name,
 			Email: user.Email,
+			Roles: rolelist,
 		}
 		dtoList = append(dtoList, dto)
 	}
@@ -109,7 +118,7 @@ func (h *UserHandle) GetById(c *gin.Context) {
 		return
 	}
 
-	user, err := h.UserService.GetUserById(id)
+	user, err := h.UserService.GetUserByIdService(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dtos.ErrorResponse{Message: err.Error()})
 		return
@@ -133,9 +142,10 @@ func (h *UserHandle) GetById(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// Assign Role To User godoc
 // @Summary      Assign Roles to User
 // @Description  Assign multiple roles to a specific user by body
-// @Tags         assigns role
+// @Tags         assign role
 // @Accept       json
 // @Produce      json
 // @Param        request body      dtos.AssignRolesRequest  true  "User ID and Role IDs"
@@ -150,11 +160,43 @@ func (h *UserHandle) AssignRolesToUser(c *gin.Context) {
 		return
 	}
 
-	err := h.UserService.AssignRolesToUser(req.UserId, req.RoleIds)
+	err := h.UserService.AssignRolesToUserService(req.UserId, req.RoleIds)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dtos.ErrorResponse{Message: err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, dtos.SuccessResponse{Message: "Roles successfully assigned"})
+}
+
+// Update User godoc
+// @Summary      Update User
+// @Description  Update user body
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        request body      dtos.UpdateUserRequest  true  "User Body"
+// @Success      200   {object}  dtos.SuccessResponse
+// @Failure      400   {object}  dtos.ErrorResponse
+// @Failure      500   {object}  dtos.ErrorResponse
+// @Router       /update_user [put]
+func (h *UserHandle) UpdateUser(c *gin.Context) {
+	var req dtos.UpdateUserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, dtos.ErrorResponse{Message: "Invalid JSON format"})
+		return
+	}
+
+	user := domains.User{
+		Id:    req.Id,
+		Name:  req.Name,
+		Email: req.Email,
+	}
+
+	if err := h.UserService.UpdateUserService(&user); err != nil {
+		c.JSON(http.StatusInternalServerError, dtos.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, dtos.SuccessResponse{Message: "User successfully Updated"})
 }
