@@ -29,8 +29,8 @@ func (s *RoleService) GetAllRoleService() ([]*domains.Role, error) {
 	return roles, nil
 }
 
-func (s *RoleService) GetRoleById(id string) (*domains.Role, error) {
-	if id == "" {
+func (s *RoleService) GetRoleById(id int) (*domains.Role, error) {
+	if id == 0 {
 		return nil, fmt.Errorf("role get by id not exist: id = %q", id)
 	}
 
@@ -42,8 +42,8 @@ func (s *RoleService) GetRoleById(id string) (*domains.Role, error) {
 	return role, nil
 }
 
-func (s *RoleService) DeleteById(id string) error {
-	if id == "" {
+func (s *RoleService) DeleteById(id int) error {
+	if id == 0 {
 		return fmt.Errorf("delete role by id not exist: id = %q", id)
 	}
 	return s.repo.DeleteById(id)

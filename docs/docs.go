@@ -15,6 +15,52 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/assign-roles": {
+            "put": {
+                "description": "Assign multiple roles to a specific user by body",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assigns role"
+                ],
+                "summary": "Assign Roles to User",
+                "parameters": [
+                    {
+                        "description": "User ID and Role IDs",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.AssignRolesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/deletebyid_role/{id}": {
             "delete": {
                 "description": "Delete a single role by ID",
@@ -30,7 +76,7 @@ const docTemplate = `{
                 "summary": "Delete role by ID",
                 "parameters": [
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "Role ID",
                         "name": "id",
                         "in": "path",
@@ -126,7 +172,7 @@ const docTemplate = `{
                 "summary": "Get role by ID",
                 "parameters": [
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "Role ID",
                         "name": "id",
                         "in": "path",
@@ -164,7 +210,7 @@ const docTemplate = `{
                 "summary": "Get user by ID",
                 "parameters": [
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "User ID",
                         "name": "id",
                         "in": "path",
@@ -281,6 +327,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "rest_api_gin_internal_dtos.AssignRolesRequest": {
+            "type": "object",
+            "properties": {
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
         "rest_api_gin_internal_dtos.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -333,6 +393,12 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/rest_api_gin_internal_dtos.RoleList"
+                    }
                 }
             }
         },
@@ -364,6 +430,22 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "minLength": 6
+                }
+            }
+        },
+        "rest_api_gin_internal_dtos.RoleList": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest_api_gin_internal_dtos.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
                 }
             }
         }

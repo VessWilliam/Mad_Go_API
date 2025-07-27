@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"rest_api_gin/cmd/api/utils"
 	"rest_api_gin/internal/handler"
 	"rest_api_gin/internal/repository"
 	"rest_api_gin/internal/router"
 	"rest_api_gin/internal/service"
+	"strconv"
 	"time"
 
 	_ "rest_api_gin/docs"
@@ -32,25 +32,26 @@ func NewApp() (*application, error) {
 		return nil, fmt.Errorf("error loading .env file: %w", err)
 	}
 
+	PORT, _ := strconv.Atoi(os.Getenv("PORT"))
 	connectString := os.Getenv("DATABASE_URL")
-	PORT := utils.ParseInt(os.Getenv("PORT"), 8080)
 
 	db, err := sqlx.Connect("postgres", connectString)
 	if err != nil {
 		return nil, err
 	}
 
-	// Register User route
-	userRepo := repository.NewUserRepo(db)
-	userService := service.NewUserService(userRepo)
-	userHandle := handler.NewUserHandler(userService)
-
-	// Register Role route
+	// Register User route & Role route
 	roleRepo := repository.NewRolesRepo(db)
+	userRepo := repository.NewUserRepo(db)
+
+	// Inject both into service
+	userService := service.NewUserService(userRepo, roleRepo)
 	roleService := service.NewRolesService(roleRepo)
+
+	userHandle := handler.NewUserHandler(userService)
 	roleHandle := handler.NewRoleHandle(roleService)
 
-	//Assign All handle
+	//Setup router
 	router := router.SetupRouter(userHandle, roleHandle)
 
 	app := &application{

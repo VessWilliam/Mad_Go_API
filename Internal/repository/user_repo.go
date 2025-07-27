@@ -49,7 +49,7 @@ func (r *UserRepo) GetAll() ([]*domains.User, error) {
 	return users, nil
 }
 
-func (r *UserRepo) GetById(id string) (*domains.User, error) {
+func (r *UserRepo) GetById(id int) (*domains.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -64,7 +64,7 @@ func (r *UserRepo) GetById(id string) (*domains.User, error) {
 	return &user, nil
 }
 
-func (r *UserRepo) GetRolesByUserId(userId string) ([]domains.Role, error) {
+func (r *UserRepo) GetRolesByUserId(userId int) ([]domains.Role, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -79,4 +79,32 @@ func (r *UserRepo) GetRolesByUserId(userId string) ([]domains.Role, error) {
 	}
 
 	return roles, nil
+}
+
+func (r *UserRepo) AssignRolesToRoles(userId int, roleIds []int) error {
+
+	tx, err := r.DB.Beginx()
+	if err != nil {
+		return fmt.Errorf("assign row failed : %v ", err)
+	}
+
+	defer tx.Rollback()
+
+	_, err = tx.Exec(`delete from user_roles where user_id = $1`, userId)
+	if err != nil {
+		return fmt.Errorf("delete user_id in user_roles : %v ", err)
+	}
+
+	for _, role_id := range roleIds {
+		_, err := tx.Exec(
+			`insert into user_roles (user_id, role_id) values ($1 , $2)`,
+			userId, role_id,
+		)
+
+		if err != nil {
+			return fmt.Errorf("insert user_roles error : %v", err)
+		}
+	}
+
+	return tx.Commit()
 }

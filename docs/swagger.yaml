@@ -1,5 +1,14 @@
 basePath: /api
 definitions:
+  rest_api_gin_internal_dtos.AssignRolesRequest:
+    properties:
+      roles:
+        items:
+          type: integer
+        type: array
+      userId:
+        type: integer
+    type: object
   rest_api_gin_internal_dtos.ErrorResponse:
     properties:
       message:
@@ -34,6 +43,10 @@ definitions:
         type: integer
       name:
         type: string
+      roles:
+        items:
+          $ref: '#/definitions/rest_api_gin_internal_dtos.RoleList'
+        type: array
     type: object
   rest_api_gin_internal_dtos.RegisterRoleRequest:
     properties:
@@ -56,6 +69,16 @@ definitions:
     - name
     - password
     type: object
+  rest_api_gin_internal_dtos.RoleList:
+    properties:
+      name:
+        type: string
+    type: object
+  rest_api_gin_internal_dtos.SuccessResponse:
+    properties:
+      message:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -63,6 +86,36 @@ info:
   title: GO & Gin API
   version: "1.0"
 paths:
+  /assign-roles:
+    put:
+      consumes:
+      - application/json
+      description: Assign multiple roles to a specific user by body
+      parameters:
+      - description: User ID and Role IDs
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/rest_api_gin_internal_dtos.AssignRolesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      summary: Assign Roles to User
+      tags:
+      - assigns role
   /deletebyid_role/{id}:
     delete:
       consumes:
@@ -73,7 +126,7 @@ paths:
         in: path
         name: id
         required: true
-        type: string
+        type: integer
       produces:
       - application/json
       responses:
@@ -136,7 +189,7 @@ paths:
         in: path
         name: id
         required: true
-        type: string
+        type: integer
       produces:
       - application/json
       responses:
@@ -161,7 +214,7 @@ paths:
         in: path
         name: id
         required: true
-        type: string
+        type: integer
       produces:
       - application/json
       responses:

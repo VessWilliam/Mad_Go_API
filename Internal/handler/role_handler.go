@@ -5,6 +5,7 @@ import (
 	"rest_api_gin/internal/domains"
 	"rest_api_gin/internal/dtos"
 	"rest_api_gin/internal/service"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -57,7 +58,7 @@ func (h *RoleHandle) RegisterRole(c *gin.Context) {
 // @Tags         role
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  dtos.GetAllRoleResponse
+// @Success      200   {object}  dtos.GetAllRoleResponse
 // @Failure      500   {object}  dtos.ErrorResponse "Internal server Error"
 // @Router       /get_roles [get]
 func (h *RoleHandle) GetRoles(c *gin.Context) {
@@ -91,12 +92,18 @@ func (h *RoleHandle) GetRoles(c *gin.Context) {
 // @Tags         role
 // @Accept       json
 // @Produce      json
-// @Param        id   path      string  true  "Role ID"
+// @Param        id   path      int  true  "Role ID"
 // @Success      200  {object}  dtos.GetSingleRoleResponse
 // @Failure      500   {object}  dtos.ErrorResponse "Internal server Error"
 // @Router       /getbyid_role/{id} [get]
 func (h *RoleHandle) GetRolesById(c *gin.Context) {
-	id := c.Param("id")
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dtos.ErrorResponse{Message: "Invalid role ID"})
+		return
+	}
+
 	role, err := h.RoleService.GetRoleById(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dtos.ErrorResponse{Message: err.Error()})
@@ -116,12 +123,12 @@ func (h *RoleHandle) GetRolesById(c *gin.Context) {
 // @Tags         role
 // @Accept       json
 // @Produce      json
-// @Param        id   path      string  true  "Role ID"
+// @Param        id   path      int  true  "Role ID"
 // @Success      200  {object}  dtos.GetSingleRoleResponse
 // @Failure      500   {object}  dtos.ErrorResponse "Internal server Error"
 // @Router       /deletebyid_role/{id} [delete]
 func (h *RoleHandle) DeleteById(c *gin.Context) {
-	id := c.Param("id")
+	id, _ := strconv.Atoi(c.Param("id"))
 
 	role, err := h.RoleService.GetRoleById(id)
 	if err != nil {

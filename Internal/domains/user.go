@@ -11,6 +11,7 @@ type User struct {
 type UserRepo interface {
 	Insert(user *User) error
 	GetAll() ([]*User, error)
-	GetById(id string) (*User, error)
-	GetRolesByUserId(userId string) ([]Role, error)
+	GetById(id int) (*User, error)
+	GetRolesByUserId(userId int) ([]Role, error)
+	AssignRolesToRoles(userId int, roleIds []int) error
 }

@@ -46,7 +46,7 @@ func (r *RoleRepo) GetAll() ([]*domains.Role, error) {
 	return roles, nil
 }
 
-func (r *RoleRepo) GetById(id string) (*domains.Role, error) {
+func (r *RoleRepo) GetById(id int) (*domains.Role, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -61,7 +61,7 @@ func (r *RoleRepo) GetById(id string) (*domains.Role, error) {
 	return &role, nil
 }
 
-func (r *RoleRepo) DeleteById(id string) error {
+func (r *RoleRepo) DeleteById(id int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 

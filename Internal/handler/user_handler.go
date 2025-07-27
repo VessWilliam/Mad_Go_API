@@ -5,6 +5,7 @@ import (
 	"rest_api_gin/internal/domains"
 	"rest_api_gin/internal/dtos"
 	"rest_api_gin/internal/service"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,7 +48,11 @@ func (h *UserHandle) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"id": user.Id})
+	c.JSON(http.StatusCreated, dtos.GetSingleUserResponse{
+		Id:    user.Id,
+		Email: user.Email,
+		Name:  user.Name,
+	})
 
 }
 
@@ -92,12 +97,18 @@ func (h *UserHandle) GetUsers(c *gin.Context) {
 // @Tags         users
 // @Accept       json
 // @Produce      json
-// @Param        id   path      string  true  "User ID"
+// @Param        id   path      int  true  "User ID"
 // @Success      200  {object}  dtos.GetSingleUserResponse
-// @Failure      500   {object}  dtos.ErrorResponse "Internal server Error"
+// @Failure      500  {object}  dtos.ErrorResponse "Internal server Error"
 // @Router       /getbyid_user/{id} [get]
 func (h *UserHandle) GetById(c *gin.Context) {
-	id := c.Param("id")
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dtos.ErrorResponse{Message: "Invalid user ID"})
+		return
+	}
+
 	user, err := h.UserService.GetUserById(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dtos.ErrorResponse{Message: err.Error()})
@@ -120,4 +131,30 @@ func (h *UserHandle) GetById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+// @Summary      Assign Roles to User
+// @Description  Assign multiple roles to a specific user by body
+// @Tags         assigns role
+// @Accept       json
+// @Produce      json
+// @Param        request body      dtos.AssignRolesRequest  true  "User ID and Role IDs"
+// @Success      200   {object}  dtos.SuccessResponse
+// @Failure      400   {object}  dtos.ErrorResponse
+// @Failure      500   {object}  dtos.ErrorResponse
+// @Router       /assign-roles [put]
+func (h *UserHandle) AssignRolesToUser(c *gin.Context) {
+	var req dtos.AssignRolesRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, dtos.ErrorResponse{Message: "Invalid JSON format"})
+		return
+	}
+
+	err := h.UserService.AssignRolesToUser(req.UserId, req.RoleIds)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dtos.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, dtos.SuccessResponse{Message: "Roles successfully assigned"})
 }

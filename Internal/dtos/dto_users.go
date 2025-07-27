@@ -23,3 +23,8 @@ type GetSingleUserResponse struct {
 type RoleList struct {
 	Name string
 }
+
+type AssignRolesRequest struct {
+	UserId  int   `json:"userId"`
+	RoleIds []int `json:"roles"`
+}

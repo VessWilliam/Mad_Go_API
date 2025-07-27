@@ -8,6 +8,6 @@ type Role struct {
 type RolesRepo interface {
 	Insert(role *Role) error
 	GetAll() ([]*Role, error)
-	GetById(id string) (*Role, error)
-	DeleteById(id string) error
+	GetById(id int) (*Role, error)
+	DeleteById(id int) error
 }
