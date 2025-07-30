@@ -55,10 +55,7 @@ func main() {
 		if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 			log.Fatal(err)
 		}
-		if err := seed.Seeder(dbx); err != nil {
-			log.Fatal(err)
-		}
-		defer dbx.Close()
+
 	case "down":
 		if err := m.Down(); err != nil && err != migrate.ErrNoChange {
 			log.Fatal(err)
@@ -74,7 +71,10 @@ func main() {
 		if err := m.Force(version); err != nil {
 			log.Fatalf("Force migration failed: %v", err)
 		}
-
+	case "seed":
+		if err := seed.Seeder(dbx); err != nil {
+			log.Fatal(err)
+		}
 	default:
 		log.Fatal("Invalid direction. Use 'Up' or 'Down'")
 
