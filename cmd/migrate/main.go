@@ -17,28 +17,27 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Fatal("Please Provide a migration direction: 'up' or 'down'")
+		log.Fatal("Please provide a migration command: 'up', 'down', 'force', or 'seed'")
+	}
+
+	// Load environment variables
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using system environment variables.")
 	}
 
 	direction := os.Args[1]
-
-	err := godotenv.Load()
-	if err != nil {
-		return
-	}
-
 	connectString := os.Getenv("DATABASE_URL")
 
+	// Connect to database
 	dbx, err := sqlx.Open("postgres", connectString)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Database connection failed:", err)
 	}
-
 	defer dbx.Close()
 
 	driver, err := postgres.WithInstance(dbx.DB, &postgres.Config{})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to create migration driver:", err)
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
@@ -47,19 +46,23 @@ func main() {
 		driver,
 	)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to initialize migrations:", err)
 	}
 
+	// Handle migration commands
 	switch direction {
 	case "up":
 		if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-			log.Fatal(err)
+			log.Fatal("Migration up failed:", err)
 		}
+		log.Println("Migration up completed.")
 
 	case "down":
 		if err := m.Down(); err != nil && err != migrate.ErrNoChange {
-			log.Fatal(err)
+			log.Fatal("Migration down failed:", err)
 		}
+		log.Println(" Migration down completed.")
+
 	case "force":
 		if len(os.Args) < 3 {
 			log.Fatal("Please provide a version number for 'force'")
@@ -71,13 +74,15 @@ func main() {
 		if err := m.Force(version); err != nil {
 			log.Fatalf("Force migration failed: %v", err)
 		}
+		log.Printf("Forced migration set to version %d\n", version)
+
 	case "seed":
 		if err := seed.Seeder(dbx); err != nil {
-			log.Fatal(err)
+			log.Fatal("Seeding failed:", err)
 		}
+		log.Println("Seeder executed successfully.")
+
 	default:
-		log.Fatal("Invalid direction. Use 'Up' or 'Down'")
-
+		log.Fatal("Invalid command. Use 'up', 'down', 'force', or 'seed'")
 	}
-
 }
