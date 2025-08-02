@@ -1,6 +1,9 @@
 package main
 
-import "log"
+import (
+	"log"
+	_ "rest_api_gin/docs" // 👈 ensure Swagger docs are registered
+)
 
 // @title           GO & Gin API
 // @version         1.0

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"rest_api_gin/internal/handler"
@@ -71,5 +72,6 @@ func (a *application) Serve() error {
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  60 * time.Second,
 	}
+	log.Printf("Server listening Port : %d\n", a.port)
 	return srv.ListenAndServe()
 }
