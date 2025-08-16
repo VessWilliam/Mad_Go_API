@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var _ domains.UserRepo = (*UserRepo)(nil)
@@ -23,12 +24,17 @@ func (r *UserRepo) Insert(user *domains.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
+	hashPass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("failed to hash password: %v", err)
+	}
+
 	query := `
 	   Insert into users (email, password, name) 
 	   values ($1, $2, $3) returning id
 	`
 
-	err := r.DB.QueryRowContext(ctx, query, user.Email, user.Password, user.Name).Scan(&user.Id)
+	err = r.DB.QueryRowContext(ctx, query, user.Email, string(hashPass), user.Name).Scan(&user.Id)
 	if err != nil {
 		return fmt.Errorf("insert failed %v", err)
 	}
