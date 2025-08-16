@@ -9,6 +9,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+var _ domains.RolesRepo = (*RoleRepo)(nil)
+
 type RoleRepo struct {
 	DB *sqlx.DB
 }
