@@ -213,6 +213,8 @@ paths:
           description: Internal server Error
           schema:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get all users
       tags:
       - users
@@ -303,7 +305,7 @@ paths:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
       summary: Login
       tags:
-      - auth
+      - auth login
   /register_role:
     post:
       consumes:

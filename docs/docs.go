@@ -140,6 +140,11 @@ const docTemplate = `{
         },
         "/get_users": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve all registered users",
                 "consumes": [
                     "application/json"
@@ -263,7 +268,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "auth login"
                 ],
                 "summary": "Login",
                 "parameters": [

@@ -21,7 +21,7 @@ func NewAuthHandle(authService *service.AuthService) *AuthHandler {
 // Login godoc
 // @Summary      Login
 // @Description  Authenticate user and return JWT Token
-// @Tags         auth
+// @Tags         auth login
 // @Accept       json
 // @Produce      json
 // @Param        login  body      dtos.LoginRequest  true  "Login Request"

@@ -64,6 +64,7 @@ func (h *UserHandle) RegisterUser(c *gin.Context) {
 // @Produce      json
 // @Success      200  {object}  dtos.GetAllUserResponse
 // @Failure      500   {object}  dtos.ErrorResponse "Internal server Error"
+// @Security     BearerAuth
 // @Router       /get_users [get]
 func (h *UserHandle) GetUsers(c *gin.Context) {
 

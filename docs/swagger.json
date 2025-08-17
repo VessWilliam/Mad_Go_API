@@ -134,6 +134,11 @@
         },
         "/get_users": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve all registered users",
                 "consumes": [
                     "application/json"
@@ -257,7 +262,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "auth login"
                 ],
                 "summary": "Login",
                 "parameters": [

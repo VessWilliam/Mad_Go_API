@@ -27,11 +27,11 @@ func SetupRouter(
 	// Public routes
 	apiGroup.POST("/login", authHandle.Login)
 	apiGroup.GET("/get_roles", roleHandle.GetRoles)
-	apiGroup.GET("/get_users", userHandle.GetUsers)
 	apiGroup.POST("/register_user", userHandle.RegisterUser)
 	apiGroup.POST("/register_role", roleHandle.RegisterRole)
 
 	// User Routes
+	JWTProtected.GET("/get_users", userHandle.GetUsers)
 	JWTProtected.GET("/getbyid_user/:id", userHandle.GetById)
 	JWTProtected.PUT("/update_user", userHandle.UpdateUser)
 	JWTProtected.PUT("/assign-roles", userHandle.AssignRolesToUser)
