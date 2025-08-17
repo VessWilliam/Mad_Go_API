@@ -130,3 +130,22 @@ func (r *UserRepo) Update(user *domains.User) error {
 	}
 	return nil
 }
+
+func (r *UserRepo) GetByEmail(email string) (*domains.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+	    select email, password, name
+		from users where email = $1
+	`
+
+	user := &domains.User{}
+	err := r.DB.QueryRowContext(ctx, query, email).Scan(&user.Email, &user.Password, &user.Name)
+
+	if err != nil {
+		return nil, fmt.Errorf("user not found %v", err)
+	}
+
+	return user, nil
+}

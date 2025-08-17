@@ -19,7 +19,7 @@ func NewRoleHandle(s *service.RoleService) *RoleHandle {
 	return &RoleHandle{RoleService: s}
 }
 
-// RegisterUser godoc
+// RegisterRole godoc
 // @Summary      Register a new role
 // @Description  Registers a role with name
 // @Tags         roles
@@ -52,7 +52,7 @@ func (h *RoleHandle) RegisterRole(c *gin.Context) {
 	})
 }
 
-// GetAllUsers godoc
+// GetRoles godoc
 // @Summary      Get all roles
 // @Description  Retrieve all registered roles
 // @Tags         roles
@@ -86,7 +86,7 @@ func (h *RoleHandle) GetRoles(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// GetById godoc
+// GetRolesById godoc
 // @Summary      Get role by ID
 // @Description  Retrieve a single role by ID
 // @Tags         roles
@@ -95,6 +95,7 @@ func (h *RoleHandle) GetRoles(c *gin.Context) {
 // @Param        id   path      int  true  "Role ID"
 // @Success      200  {object}  dtos.GetSingleRoleResponse
 // @Failure      500   {object}  dtos.ErrorResponse "Internal server Error"
+// @Security     BearerAuth
 // @Router       /getbyid_role/{id} [get]
 func (h *RoleHandle) GetRolesById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
@@ -117,15 +118,16 @@ func (h *RoleHandle) GetRolesById(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// GetById godoc
+// DeleteById godoc
 // @Summary      Delete role by ID
 // @Description  Delete a single role by ID
 // @Tags         roles
 // @Accept       json
 // @Produce      json
 // @Param        id   path      int  true  "Role ID"
-// @Success      200  {object}  dtos.GetSingleRoleResponse
+// @Success      200  {object}  dtos.SuccessResponse
 // @Failure      500   {object}  dtos.ErrorResponse "Internal server Error"
+// @Security     BearerAuth
 // @Router       /deletebyid_role/{id} [delete]
 func (h *RoleHandle) DeleteById(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
@@ -144,7 +146,7 @@ func (h *RoleHandle) DeleteById(c *gin.Context) {
 	c.JSON(http.StatusOK, dtos.SuccessResponse{Message: "deleted role success !"})
 }
 
-// Update Role godoc
+// UpdateRole godoc
 // @Summary      Update Role
 // @Description  Update role body
 // @Tags         roles
@@ -154,6 +156,7 @@ func (h *RoleHandle) DeleteById(c *gin.Context) {
 // @Success      200   {object}  dtos.SuccessResponse
 // @Failure      400   {object}  dtos.ErrorResponse
 // @Failure      500   {object}  dtos.ErrorResponse
+// @Security     BearerAuth
 // @Router       /update_role [put]
 func (h *RoleHandle) UpdateRole(c *gin.Context) {
 	var req dtos.UpdateRoleRequest

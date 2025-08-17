@@ -109,6 +109,7 @@ func (h *UserHandle) GetUsers(c *gin.Context) {
 // @Param        id   path      int  true  "User ID"
 // @Success      200  {object}  dtos.GetSingleUserResponse
 // @Failure      500  {object}  dtos.ErrorResponse "Internal server Error"
+// @Security     BearerAuth
 // @Router       /getbyid_user/{id} [get]
 func (h *UserHandle) GetById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
@@ -152,6 +153,7 @@ func (h *UserHandle) GetById(c *gin.Context) {
 // @Success      200   {object}  dtos.SuccessResponse
 // @Failure      400   {object}  dtos.ErrorResponse
 // @Failure      500   {object}  dtos.ErrorResponse
+// @Security     BearerAuth
 // @Router       /assign-roles [put]
 func (h *UserHandle) AssignRolesToUser(c *gin.Context) {
 	var req dtos.AssignRolesRequest
@@ -179,6 +181,7 @@ func (h *UserHandle) AssignRolesToUser(c *gin.Context) {
 // @Success      200   {object}  dtos.SuccessResponse
 // @Failure      400   {object}  dtos.ErrorResponse
 // @Failure      500   {object}  dtos.ErrorResponse
+// @Security     BearerAuth
 // @Router       /update_user [put]
 func (h *UserHandle) UpdateUser(c *gin.Context) {
 	var req dtos.UpdateUserRequest

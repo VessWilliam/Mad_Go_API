@@ -48,6 +48,16 @@ definitions:
           $ref: '#/definitions/rest_api_gin_internal_dtos.RoleList'
         type: array
     type: object
+  rest_api_gin_internal_dtos.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
   rest_api_gin_internal_dtos.RegisterRoleRequest:
     properties:
       name:
@@ -77,6 +87,11 @@ definitions:
   rest_api_gin_internal_dtos.SuccessResponse:
     properties:
       message:
+        type: string
+    type: object
+  rest_api_gin_internal_dtos.TokenResponse:
+    properties:
+      JWTtoken:
         type: string
     type: object
   rest_api_gin_internal_dtos.UpdateRoleRequest:
@@ -131,6 +146,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Assign Roles to User
       tags:
       - assign role
@@ -151,11 +168,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/rest_api_gin_internal_dtos.GetSingleRoleResponse'
+            $ref: '#/definitions/rest_api_gin_internal_dtos.SuccessResponse'
         "500":
           description: Internal server Error
           schema:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete role by ID
       tags:
       - roles
@@ -219,6 +238,8 @@ paths:
           description: Internal server Error
           schema:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get role by ID
       tags:
       - roles
@@ -244,9 +265,45 @@ paths:
           description: Internal server Error
           schema:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get user by ID
       tags:
       - users
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT Token
+      parameters:
+      - description: Login Request
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/rest_api_gin_internal_dtos.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.TokenResponse'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+        "500":
+          description: Internal server Error
+          schema:
+            $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      summary: Login
+      tags:
+      - auth
   /register_role:
     post:
       consumes:
@@ -334,6 +391,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update Role
       tags:
       - roles
@@ -364,7 +423,16 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/rest_api_gin_internal_dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update User
       tags:
       - users
+securityDefinitions:
+  BearerAuth:
+    description: Provide your access token in the Authorization header using the Bearer
+      scheme.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

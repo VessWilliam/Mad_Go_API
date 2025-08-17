@@ -8,27 +8,38 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func SetupRouter(userHandle *handler.UserHandle,
-	roleHandle *handler.RoleHandle) *gin.Engine {
+func SetupRouter(
+	userHandle *handler.UserHandle,
+	roleHandle *handler.RoleHandle,
+	authHandle *handler.AuthHandler,
+	authMiddleware gin.HandlerFunc,
+) *gin.Engine {
 	router := gin.Default()
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	apiGroup := router.Group("/api")
 
-	//User Route
-	apiGroup.GET("/get_users", userHandle.GetUsers)
-	apiGroup.PUT("/update_user", userHandle.UpdateUser)
-	apiGroup.GET("/getbyid_user/:id", userHandle.GetById)
-	apiGroup.POST("/register_user", userHandle.RegisterUser)
-	apiGroup.PUT("/assign-roles", userHandle.AssignRolesToUser)
+	// Protected routes
+	JWTProtected := apiGroup.Group("/")
+	JWTProtected.Use(authMiddleware)
 
-	//Role Route
+	// Public routes
+	apiGroup.POST("/login", authHandle.Login)
 	apiGroup.GET("/get_roles", roleHandle.GetRoles)
-	apiGroup.PUT("/update_role", roleHandle.UpdateRole)
+	apiGroup.GET("/get_users", userHandle.GetUsers)
+	apiGroup.POST("/register_user", userHandle.RegisterUser)
 	apiGroup.POST("/register_role", roleHandle.RegisterRole)
-	apiGroup.GET("/getbyid_role/:id", roleHandle.GetRolesById)
-	apiGroup.DELETE("/deletebyid_role/:id", roleHandle.DeleteById)
+
+	// User Routes
+	JWTProtected.GET("/getbyid_user/:id", userHandle.GetById)
+	JWTProtected.PUT("/update_user", userHandle.UpdateUser)
+	JWTProtected.PUT("/assign-roles", userHandle.AssignRolesToUser)
+
+	// Role Routes
+	JWTProtected.GET("/getbyid_role/:id", roleHandle.GetRolesById)
+	JWTProtected.PUT("/update_role", roleHandle.UpdateRole)
+	JWTProtected.DELETE("/deletebyid_role/:id", roleHandle.DeleteById)
 
 	return router
 }

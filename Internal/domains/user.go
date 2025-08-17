@@ -15,4 +15,5 @@ type UserRepo interface {
 	GetById(id int) (*User, error)
 	GetRolesByUserId(userId int) ([]Role, error)
 	AssignRolesToRoles(userId int, roleIds []int) error
+	GetByEmail(email string) (*User, error)
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"rest_api_gin/internal/handler"
+	"rest_api_gin/internal/middleware"
 	"rest_api_gin/internal/repository"
 	"rest_api_gin/internal/router"
 	"rest_api_gin/internal/service"
@@ -41,19 +42,31 @@ func NewApp() (*application, error) {
 		return nil, err
 	}
 
-	// Register User route & Role route
+	// Repos
 	roleRepo := repository.NewRolesRepo(db)
 	userRepo := repository.NewUserRepo(db)
 
-	// Inject both into service
+	// Services
 	userService := service.NewUserService(userRepo, roleRepo)
 	roleService := service.NewRolesService(roleRepo)
 
+	// JWT service
+	secret := os.Getenv("JWT_SECRET")
+	jwtService := service.NewJWTService(secret, 24*time.Hour)
+
+	// Middleware
+	authMiddleware := middleware.NewAuthMiddleware(*jwtService)
+
+	// Auth service & handler
+	authService := service.NewAuthService(userRepo, roleRepo, jwtService)
+	authHandler := handler.NewAuthHandle(authService)
+
+	// Other handlers
 	userHandle := handler.NewUserHandler(userService)
 	roleHandle := handler.NewRoleHandle(roleService)
 
-	//Setup router
-	router := router.SetupRouter(userHandle, roleHandle)
+	// Setup router — pass authHandler too
+	router := router.SetupRouter(userHandle, roleHandle, authHandler, authMiddleware.Handle())
 
 	app := &application{
 		port:   PORT,

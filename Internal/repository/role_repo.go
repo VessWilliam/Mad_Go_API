@@ -87,3 +87,28 @@ func (r *RoleRepo) Update(role *domains.Role) error {
 	}
 	return nil
 }
+
+func (r *RoleRepo) GetRoleByEmail(email string) ([]string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+    SELECT r.name
+	FROM user_roles ur
+	JOIN users u ON ur.user_id = u.id
+	JOIN roles r ON ur.role_id = r.id
+	WHERE u.email = $1;
+   `
+
+	var roles []string
+	if err := r.DB.SelectContext(ctx, &roles, query, email); err != nil {
+		return nil, err
+	}
+
+	if len(roles) == 0 {
+		roles = []string{"Unassign"}
+	}
+
+	return roles, nil
+
+}

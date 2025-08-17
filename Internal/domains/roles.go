@@ -11,4 +11,5 @@ type RolesRepo interface {
 	GetAll() ([]*Role, error)
 	GetById(id int) (*Role, error)
 	DeleteById(id int) error
+	GetRoleByEmail(email string) ([]string, error)
 }

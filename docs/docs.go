@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/assign-roles": {
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Assign multiple roles to a specific user by body",
                 "consumes": [
                     "application/json"
@@ -63,6 +68,11 @@ const docTemplate = `{
         },
         "/deletebyid_role/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete a single role by ID",
                 "consumes": [
                     "application/json"
@@ -87,7 +97,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest_api_gin_internal_dtos.GetSingleRoleResponse"
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.SuccessResponse"
                         }
                     },
                     "500": {
@@ -159,6 +169,11 @@ const docTemplate = `{
         },
         "/getbyid_role/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve a single role by ID",
                 "consumes": [
                     "application/json"
@@ -197,6 +212,11 @@ const docTemplate = `{
         },
         "/getbyid_user/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieve a single user by ID",
                 "consumes": [
                     "application/json"
@@ -222,6 +242,58 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/rest_api_gin_internal_dtos.GetSingleUserResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server Error",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Authenticate user and return JWT Token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Login Request",
+                        "name": "login",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/rest_api_gin_internal_dtos.ErrorResponse"
                         }
                     },
                     "500": {
@@ -327,6 +399,11 @@ const docTemplate = `{
         },
         "/update_role": {
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Update role body",
                 "consumes": [
                     "application/json"
@@ -373,6 +450,11 @@ const docTemplate = `{
         },
         "/update_user": {
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Update user body",
                 "consumes": [
                     "application/json"
@@ -494,6 +576,21 @@ const docTemplate = `{
                 }
             }
         },
+        "rest_api_gin_internal_dtos.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "rest_api_gin_internal_dtos.RegisterRoleRequest": {
             "type": "object",
             "required": [
@@ -541,6 +638,14 @@ const docTemplate = `{
                 }
             }
         },
+        "rest_api_gin_internal_dtos.TokenResponse": {
+            "type": "object",
+            "properties": {
+                "JWTtoken": {
+                    "type": "string"
+                }
+            }
+        },
         "rest_api_gin_internal_dtos.UpdateRoleRequest": {
             "type": "object",
             "required": [
@@ -568,6 +673,14 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Provide your access token in the Authorization header using the Bearer scheme.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
