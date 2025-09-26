@@ -1,20 +1,28 @@
 package seed
 
 import (
+	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func Seeder(dbx *sqlx.DB) error {
 
-	name := "ADMIN"
-	email := "Admin@gmail.com"
-	password := "root123"
+	err := godotenv.Load()
+	if err != nil {
+		return fmt.Errorf("error loading .env file: %w", err)
+	}
 
-	_, err := dbx.Exec(`insert into roles (name) values ($1) ON CONFLICT DO NOTHING`, name)
+	name := os.Getenv("SEEDER_NAME")
+	email := os.Getenv("SEEDER_EMAIL")
+	password := os.Getenv("SEEDER_PASS")
+
+	_, err = dbx.Exec(`insert into roles (name) values ($1) ON CONFLICT DO NOTHING`, name)
 	if err != nil {
 		log.Fatal("insert role error", err)
 		return err

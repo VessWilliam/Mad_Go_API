@@ -1,0 +1,35 @@
+# ---------- Build stage ----------
+FROM golang:1.24-alpine AS builder
+
+# Set working directory inside container
+WORKDIR /app
+
+# Install git (needed for some Go modules)
+RUN apk add --no-cache git
+
+# Copy go.mod & go.sum first (for caching dependencies)
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the rest of your source code
+COPY . .
+
+# Build a static binary for Linux, strip debug info
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -ldflags="-s -w" -o server ./cmd/api
+
+# ---------- Final (tiny) image ----------
+FROM scratch
+
+# Working directory
+WORKDIR /
+
+# Copy the compiled binary from builder
+COPY --from=builder /app/server .
+
+# Environment & port
+ENV PORT=4000
+EXPOSE 4000
+
+# Start the server
+CMD ["/server"]

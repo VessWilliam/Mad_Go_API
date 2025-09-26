@@ -1,0 +1,7 @@
+# Ignore local dev files
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+*.md
+tmp
