@@ -4,29 +4,33 @@ import (
 	"log"
 	"os"
 	"rest_api_gin/internal/seed"
+	"rest_api_gin/internal/utils"
 	"strconv"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
 
 	_ "github.com/lib/pq"
 )
 
 func main() {
+	utils.LoadEnv()
+
 	if len(os.Args) < 2 {
 		log.Fatal("Please provide a migration command: 'up', 'down', 'force', or 'seed'")
 	}
 
-	// Load environment variables
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, using system environment variables.")
-	}
-
 	direction := os.Args[1]
+
 	connectString := os.Getenv("DATABASE_URL")
+
+	migrationPath := os.Getenv("MIGRATIONS_PATH")
+
+	if migrationPath == "" {
+		migrationPath = "file://cmd/migrate/migrations"
+	}
 
 	// Connect to database
 	dbx, err := sqlx.Open("postgres", connectString)
@@ -41,10 +45,11 @@ func main() {
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
-		"file://cmd/migrate/migrations",
+		migrationPath,
 		"postgres",
 		driver,
 	)
+
 	if err != nil {
 		log.Fatal("Failed to initialize migrations:", err)
 	}

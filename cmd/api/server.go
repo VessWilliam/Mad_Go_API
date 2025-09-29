@@ -10,6 +10,7 @@ import (
 	"rest_api_gin/internal/repository"
 	"rest_api_gin/internal/router"
 	"rest_api_gin/internal/service"
+	"rest_api_gin/internal/utils"
 	"strconv"
 	"time"
 
@@ -19,7 +20,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
 )
 
 type application struct {
@@ -29,10 +29,7 @@ type application struct {
 
 func NewApp() (*application, error) {
 
-	err := godotenv.Load()
-	if err != nil {
-		return nil, fmt.Errorf("error loading .env file: %w", err)
-	}
+	utils.LoadEnv()
 
 	PORT, _ := strconv.Atoi(os.Getenv("PORT"))
 	connectString := os.Getenv("DATABASE_URL")

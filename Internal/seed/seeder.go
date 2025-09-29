@@ -4,25 +4,25 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"rest_api_gin/internal/utils"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func Seeder(dbx *sqlx.DB) error {
 
-	err := godotenv.Load()
-	if err != nil {
-		return fmt.Errorf("error loading .env file: %w", err)
-	}
+	utils.LoadEnv()
 
 	name := os.Getenv("SEEDER_NAME")
 	email := os.Getenv("SEEDER_EMAIL")
 	password := os.Getenv("SEEDER_PASS")
 
-	_, err = dbx.Exec(`insert into roles (name) values ($1) ON CONFLICT DO NOTHING`, name)
+	if name == "" || email == "" || password == "" {
+		return fmt.Errorf("missing seeder environment variables (SEEDER_NAME, SEEDER_EMAIL, SEEDER_PASS)")
+	}
+	_, err := dbx.Exec(`insert into roles (name) values ($1) ON CONFLICT DO NOTHING`, name)
 	if err != nil {
 		log.Fatal("insert role error", err)
 		return err
@@ -32,7 +32,7 @@ func Seeder(dbx *sqlx.DB) error {
 	err = dbx.Get(&count, `Select Count(*) from users`)
 	if err != nil {
 		log.Fatal("count user error", err)
-		return err
+		return nil
 	}
 
 	if count > 0 {
