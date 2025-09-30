@@ -1,41 +1,23 @@
-# ---------- Build stage ----------
-FROM golang:1.24-alpine AS builder
-
-WORKDIR /app
-
-# Install git (needed for go modules)
-RUN apk add --no-cache git
-
-# Cache dependencies
-COPY go.mod go.sum ./
-RUN go mod download
-
-# Copy source code
-COPY . .
-
-# Build API binary
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -ldflags="-s -w" -o api ./cmd/api
-
-# Build migrate binary
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -ldflags="-s -w" -o migrate ./cmd/migrate
-
 # ---------- Final image ----------
-FROM alpine:latest 
-
+FROM alpine:latest
 WORKDIR /app
 
 # Copy binaries
-COPY --from=builder /app/api .
-COPY --from=builder /app/migrate .
+COPY ../bin/api .
+COPY ../bin/migrate .
 
-# Copy migrations folder to correct location
-COPY --from=builder /app/cmd/migrate/migrations ./migrations
+# Ensure binaries are executable
+RUN chmod +x api migrate
 
-# Expose API port
+# Copy migrations
+COPY ../cmd/migrate/migrations ./migrations
+
+# Copy .env if needed
+COPY ../.env .
+
+# Expose port
 ENV PORT=8080
 EXPOSE 8080
 
-# Default run api
+# Default run
 CMD ["./api"]

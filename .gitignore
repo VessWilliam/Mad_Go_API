@@ -7,7 +7,6 @@
 *.dylib
 *.test
 *.out
-/bin/
 /build/
 /dist/
 /coverage/
